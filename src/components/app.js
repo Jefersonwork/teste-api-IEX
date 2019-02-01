@@ -8,21 +8,21 @@ import React, { Component } from "react";
 import api from "../api/api";
 
 export default class App extends Component {
-    
+
     state = {
         symbol: ""
     };
-    
-    handleSubmite = event => {
+
+    handleSubmit = event => {
         event.preventDefault();
-        
+
         const { symbol } = this.state;
-        
-        if (!symbol.length)return console.log("vazio");
-        
+
+        if (!symbol.length) return console.log("vazio");
+
         return console.log(symbol);
     }
-    
+
     handleInputChange = event => {
         this.setState({ symbol: event.target.value });
     }
@@ -32,11 +32,11 @@ export default class App extends Component {
             <div>
                 <div className="header-page">
                     <h2>app</h2>
-                    <form onSubmit={ this.handleSubmite }>
+                    <form onSubmit={this.handleSubmit}>
                         <input
-                            value={ this.setState.symbol }
-                            onChange={ this.handleInputChange }
-                            placeholder="Simbolo da ação"/>
+                            value={this.setState.symbol}
+                            onChange={this.handleInputChange}
+                            placeholder="Simbolo da ação" />
                         <button type="submite">Buscar</button>
                     </form>
                 </div>
