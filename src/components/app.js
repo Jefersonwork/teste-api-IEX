@@ -1,49 +1,63 @@
 import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../../node_modules/font-awesome/css/font-awesome.min.css";
 
-//@renatinhadiniz
-
 import React, { Component } from "react";
+import axios from "axios";
 
-import api from "../api/api";
+const URL = "https://api.iextrading.com/1.0/stock";
 
 export default class App extends Component {
+    constructor(props) {
+        super(props);
 
-    state = {
-        symbol: ""
-    };
+        this.state = {
+            description: "",
+            companyData: ""
+        }
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
+    }
+
+    refresh(description) {
+        const symbol = description;
+        axios.get(`${URL}/${symbol}/quote`)
+            .then(resp => this.setState({ ...this.state, companyData: resp.data}));
+    }
+
+    handleSearch() {
+        this.refresh(this.state.description);
+    }
 
     handleSubmit = event => {
         event.preventDefault();
 
-        const { symbol } = this.state;
+        const { description } = this.state;
 
-        if (!symbol.length) return console.log("vazio");
-
-        return console.log(symbol);
+        if (!description.length) return;
+        this.handleSearch();
     }
 
-    handleInputChange = event => {
-        this.setState({ symbol: event.target.value });
+    handleChange(event) {
+        this.setState({ ...this.state, description: event.target.value });
     }
 
     render() {
+
         return (
             <div>
-                <div className="header-page">
-                    <h2>app</h2>
-                    <form onSubmit={this.handleSubmit}>
-                        <input
-                            value={this.setState.symbol}
-                            onChange={this.handleInputChange}
-                            placeholder="Simbolo da ação" />
-                        <button type="submite">Buscar</button>
-                    </form>
-                </div>
+                <form onSubmit={ this.handleSubmit }>
+                    <input placeholder="buscar por simbulo"
+                        onChange={ this.handleChange }
+                        value={ this.symbol }
+                    />
 
-                <div>
+                    <button type="submite">
+                        Buscar
+                    </button>
 
-                </div>
+                    <h2>{ this.state.companyData.latestPrice }</h2>
+                </form>
             </div>
         )
     }
