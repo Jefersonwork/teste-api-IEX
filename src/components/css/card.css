@@ -1,0 +1,20 @@
+.none {
+    display: none;
+}
+
+.card {
+    box-shadow: 3px 3px 15px #696969;
+    font-family: 'Rubik', sans-serif;
+}
+
+.card h5 {
+    font-size: 15px;
+}
+
+.card h4 {
+    font-size: 18px;
+}
+
+.card h3 {
+    font-size: 25px;
+}

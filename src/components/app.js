@@ -2,9 +2,12 @@ import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "../../node_modules/font-awesome/css/font-awesome.min.css";
 
 import React, { Component } from "react";
-import axios from "axios";
 
-const URL = "https://api.iextrading.com/1.0/stock";
+import api from "../api/api";
+import Card from "./card";
+import Header from "./header";
+
+import "./css/app.css";
 
 export default class App extends Component {
     constructor(props) {
@@ -12,20 +15,18 @@ export default class App extends Component {
 
         this.state = {
             description: "",
-            companyData: ""
+            companyData: "",
+            display: "none"
         }
-
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSearch = this.handleSearch.bind(this);
     }
 
-    refresh(description) {
+    refresh = description => {
         const symbol = description;
-        axios.get(`${URL}/${symbol}/quote`)
-            .then(resp => this.setState({ ...this.state, companyData: resp.data}));
+        api.get(`/${symbol}/quote`)
+            .then(resp => this.setState({ ...this.state, companyData: resp.data, display: "inline-block" }));
     }
 
-    handleSearch() {
+    handleSearch = () => {
         this.refresh(this.state.description);
     }
 
@@ -38,26 +39,31 @@ export default class App extends Component {
         this.handleSearch();
     }
 
-    handleChange(event) {
+    handleChange = event => {
         this.setState({ ...this.state, description: event.target.value });
     }
 
     render() {
 
+        const company = this.state.companyData;
+        
         return (
-            <div>
-                <form onSubmit={ this.handleSubmit }>
-                    <input placeholder="buscar por simbulo"
-                        onChange={ this.handleChange }
-                        value={ this.symbol }
-                    />
+            <div className="container">
+                <Header 
+                    onSubmit={ this.handleSubmit }
+                    onChange={ this.handleChange }
+                    value={ this.symbol }
+                />
 
-                    <button type="submite">
-                        Buscar
-                    </button>
-
-                    <h2>{ this.state.companyData.latestPrice }</h2>
-                </form>
+                <Card
+                    display = { this.state.display }
+                    title={ company.companyName }
+                    symbol={ company.symbol } 
+                    price={ company.latestPrice }
+                    open = { company.open }
+                    high = { company.high }
+                    low = { company.low }
+                />
             </div>
         )
     }
