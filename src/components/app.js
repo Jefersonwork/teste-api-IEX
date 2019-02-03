@@ -6,6 +6,7 @@ import React, { Component } from "react";
 import api from "../api/api";
 import Card from "./card";
 import Header from "./header";
+import Loading from "./loading";
 
 import "./css/app.css";
 
@@ -15,15 +16,26 @@ export default class App extends Component {
 
         this.state = {
             description: "",
+            loading: "none",
             companyData: "",
             display: "none"
         }
     }
 
-    refresh = description => {
-        const symbol = description;
-        api.get(`/${symbol}/quote`)
-            .then(resp => this.setState({ ...this.state, companyData: resp.data, display: "inline-block" }));
+
+    refresh = async description => {
+        
+        try {
+            const symbol = description;
+            await api.get(`/${symbol}/quote`)
+                .then(resp => this.setState({ ...this.state, companyData: resp.data}));
+                this.setState({ ...this.state, loading: "none", display: ""});
+        } catch(err) {
+            alert("Simbulo não encontado \n" + err);
+            this.setState({ ...this.state, loading: "none", display: "none"});
+    
+            return console.clear();
+        }
     }
 
     handleSearch = () => {
@@ -32,10 +44,12 @@ export default class App extends Component {
 
     handleSubmit = event => {
         event.preventDefault();
-
+        
         const { description } = this.state;
+        
+        if (!description.length) return alert("Insira um símbolo");
 
-        if (!description.length) return;
+        this.setState({ ...this.state, loading: "", display: "none"});
         this.handleSearch();
     }
 
@@ -55,6 +69,7 @@ export default class App extends Component {
                     value={ this.symbol }
                 />
 
+                <Loading loading = { this.state.loading } />
                 <Card
                     display = { this.state.display }
                     title={ company.companyName }
